@@ -3,42 +3,25 @@
 body {
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(to right, #eef2f3, #8e9eab);
-  color: #1f2937;
+  background: linear-gradient(to right, #f0f4ff, #e0ecff);
 }
 
 .App {
   max-width: 600px;
-  margin: 4rem auto;
+  margin: 2rem auto;
   padding: 2rem;
-  background: white;
+  background-color: white;
   border-radius: 16px;
-  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05);
   text-align: center;
-  animation: fadeIn 0.5s ease-in;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+h1, h2, h3 {
+  color: #1e3a8a;
 }
 
-h1 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-  color: #111827;
-}
-
-h2 {
-  font-size: 1.3rem;
-  margin-bottom: 1rem;
-  color: #2563eb;
-}
-
-p, li {
-  font-size: 1rem;
-  margin: 0.4rem 0;
-  color: #374151;
+p {
+  color: #4b5563;
 }
 
 input {
@@ -47,85 +30,69 @@ input {
   padding: 0.7rem;
   font-size: 1rem;
   border: 1px solid #d1d5db;
-  border-radius: 8px;
+  border-radius: 10px;
   box-sizing: border-box;
-  transition: border-color 0.2s;
-}
-
-input:focus {
-  border-color: #2563eb;
-  outline: none;
 }
 
 button {
   margin: 0.5rem 0.25rem;
-  padding: 0.6rem 1.2rem;
+  padding: 0.7rem 1.5rem;
   font-size: 1rem;
   border: none;
-  border-radius: 8px;
-  background: linear-gradient(to right, #3b82f6, #2563eb);
+  border-radius: 10px;
+  background-color: #3b82f6;
   color: white;
   cursor: pointer;
   transition: background 0.3s ease;
 }
 
 button:hover {
-  background: linear-gradient(to right, #2563eb, #1e40af);
+  background-color: #2563eb;
 }
 
 .rates {
   display: flex;
   justify-content: center;
   gap: 1rem;
-  flex-wrap: wrap;
   margin: 1rem 0;
 }
 
 .rate-item {
-  background: #e0f2fe;
-  padding: 0.6rem 1rem;
+  background-color: #eef2ff;
+  padding: 0.5rem 1rem;
   border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  font-weight: bold;
+  color: #1d4ed8;
 }
 
 .ticker {
-  background: #fef3c7;
-  color: #92400e;
+  background-color: #fef9c3;
   padding: 0.5rem;
-  margin-bottom: 1rem;
   border-radius: 8px;
-  animation: slideIn 0.5s ease-in-out;
+  margin: 1rem 0;
+  animation: ticker-scroll 4s linear infinite;
 }
 
-@keyframes slideIn {
-  from { transform: translateX(-20px); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-
-ul, ol {
-  text-align: left;
-  padding-left: 1.5rem;
-  margin-top: 1rem;
-  background: #f9fafb;
-  border-radius: 10px;
-  padding: 1rem;
-  box-shadow: inset 0 0 4px rgba(0,0,0,0.05);
+@keyframes ticker-scroll {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(-2%); }
+  100% { transform: translateX(0); }
 }
 
 .chat-box {
-  margin-top: 1rem;
   text-align: left;
-  background: #f0fdf4;
+  background: #f3f4f6;
   padding: 1rem;
-  border-radius: 12px;
-  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
   max-height: 200px;
   overflow-y: auto;
+  margin-bottom: 1rem;
 }
 
-.chat-box input {
-  width: 100%;
-  margin-top: 0.5rem;
+ol {
+  text-align: left;
+  padding-left: 1.2rem;
 }
+
 
 

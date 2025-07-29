@@ -1,59 +1,51 @@
 /* LandingPage.css */
 
 .landing-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   height: 100vh;
-  background: linear-gradient(135deg, #1e3a8a, #2563eb);
+  background: linear-gradient(135deg, #1e3a8a, #1d4ed8);
   color: white;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  padding: 2rem;
-}
-
-.landing-card {
-  background: white;
-  color: #1f2937;
-  padding: 2.5rem 2rem;
-  border-radius: 16px;
-  max-width: 420px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 .landing-logo {
-  width: 60px;
-  margin-bottom: 1rem;
+  width: 100px;
+  height: 100px;
+  margin-bottom: 1.5rem;
+  animation: pulse 2s infinite;
 }
 
-.tagline {
-  font-size: 1.1rem;
-  margin: 1rem 0 1.5rem;
-  color: #4b5563;
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.9; }
 }
 
-.features {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 2rem;
+.landing-container h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
 }
 
-.features li {
-  margin: 0.5rem 0;
-  font-size: 0.95rem;
+.landing-container p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
 }
 
-button {
-  background-color: #3b82f6;
-  color: white;
+.landing-container button {
+  background-color: #facc15;
+  color: #1e293b;
   border: none;
-  padding: 0.75rem 1.5rem;
+  padding: 0.8rem 2rem;
+  border-radius: 12px;
   font-size: 1rem;
-  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.25s ease;
+  transition: all 0.3s ease;
 }
 
-button:hover {
-  background-color: #2563eb;
+.landing-container button:hover {
+  background-color: #eab308;
 }
+
