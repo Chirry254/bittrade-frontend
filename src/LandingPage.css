@@ -1,0 +1,59 @@
+/* LandingPage.css */
+
+.landing-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #1e3a8a, #2563eb);
+  color: white;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-align: center;
+  padding: 2rem;
+}
+
+.landing-card {
+  background: white;
+  color: #1f2937;
+  padding: 2.5rem 2rem;
+  border-radius: 16px;
+  max-width: 420px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.landing-logo {
+  width: 60px;
+  margin-bottom: 1rem;
+}
+
+.tagline {
+  font-size: 1.1rem;
+  margin: 1rem 0 1.5rem;
+  color: #4b5563;
+}
+
+.features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2rem;
+}
+
+.features li {
+  margin: 0.5rem 0;
+  font-size: 0.95rem;
+}
+
+button {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+}
+
+button:hover {
+  background-color: #2563eb;
+}
