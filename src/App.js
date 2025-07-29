@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
@@ -7,6 +7,7 @@ function App() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [amount, setAmount] = useState('');
+  const [trades, setTrades] = useState([]);
 
   const handleRegister = async () => {
     const res = await fetch('https://bittrade-backend-1bk5.onrender.com/api/register', {
@@ -28,6 +29,7 @@ function App() {
     if (data.wallet !== undefined) {
       setWallet(data.wallet);
       setView('trade');
+      fetchTradeHistory(); // ✅ Fetch trade history after successful login
     } else {
       alert(data.error);
     }
@@ -42,8 +44,17 @@ function App() {
     const data = await res.json();
     if (data.wallet !== undefined) {
       setWallet(data.wallet);
+      fetchTradeHistory(); // ✅ Update trade history after each trade
     }
     alert(data.message || data.error);
+  };
+
+  const fetchTradeHistory = async () => {
+    const res = await fetch(`https://bittrade-backend-1bk5.onrender.com/api/trades/${username}`);
+    const data = await res.json();
+    if (Array.isArray(data)) {
+      setTrades(data);
+    }
   };
 
   return (
@@ -70,6 +81,16 @@ function App() {
             onChange={e => setAmount(e.target.value)}
           />
           <button onClick={handleTrade}>Execute Trade</button>
+
+          <h3>🧾 Recent Trade History</h3>
+          <ul>
+            {trades.map((t, i) => (
+              <li key={i}>
+                {new Date(t.timestamp).toLocaleString()} — 
+                {t.result >= 0 ? ' ✅ Profit:' : ' ❌ Loss:'} {t.result.toFixed(4)} BTC
+              </li>
+            ))}
+          </ul>
         </div>
       )}
     </div>
