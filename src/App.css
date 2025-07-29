@@ -1,31 +1,65 @@
+/* App.css */
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f9fafb;
+}
+
 .App {
-  font-family: sans-serif;
+  max-width: 500px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background-color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
   text-align: center;
-  padding: 40px;
-  background: #0d1117;
-  color: white;
-  min-height: 100vh;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #1f2937;
+}
+
+h2 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: #374151;
+}
+
+p {
+  font-size: 1rem;
+  margin: 0.5rem 0;
+  color: #4b5563;
 }
 
 input {
-  padding: 10px;
-  margin: 5px;
-  border-radius: 6px;
-  border: none;
-  width: 200px;
+  display: block;
+  width: 100%;
+  margin: 0.5rem 0;
+  padding: 0.6rem;
+  font-size: 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  box-sizing: border-box;
 }
 
 button {
-  margin: 5px;
-  padding: 10px 20px;
-  background: #28a745;
+  margin: 0.5rem 0.25rem;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
+  background-color: #3b82f6;
   color: white;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 button:hover {
-  background: #218838;
+  background-color: #2563eb;
 }
+
+
 
