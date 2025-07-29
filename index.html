@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BitTrade Frontend</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 500px;
+      margin: auto;
+      padding: 20px;
+      background: #f7f7f7;
+    }
+    h2 { color: #333; }
+    input, button {
+      padding: 10px;
+      margin: 8px 0;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .section {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    #walletDisplay {
+      font-weight: bold;
+      font-size: 1.2em;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>💸 BitTrade App</h2>
+
+  <div class="section">
+    <h3>Register</h3>
+    <input type="text" id="regUser" placeholder="Username" />
+    <input type="password" id="regPass" placeholder="Password" />
+    <button onclick="register()">Register</button>
+    <div id="regMsg"></div>
+  </div>
+
+  <div class="section">
+    <h3>Login</h3>
+    <input type="text" id="loginUser" placeholder="Username" />
+    <input type="password" id="loginPass" placeholder="Password" />
+    <button onclick="login()">Login</button>
+    <div id="loginMsg"></div>
+  </div>
+
+  <div class="section" id="tradeSection" style="display:none;">
+    <h3>Trade</h3>
+    <p>Welcome, <span id="loggedInUser"></span>!</p>
+    <p>Wallet Balance: <span id="walletDisplay">0</span></p>
+    <input type="number" id="amount" placeholder="Amount to Trade" />
+    <button onclick="trade()">Make Trade</button>
+    <div id="tradeMsg"></div>
+  </div>
+
+  <script>
+    const API = 'https://bittrade-backend-1bk5.onrender.com/api';
+    let currentUser = '';
+
+    async function register() {
+      const username = document.getElementById('regUser').value;
+      const password = document.getElementById('regPass').value;
+      const res = await fetch(`${API}/register`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ username, password })
+      });
+      const data = await res.json();
+      document.getElementById('regMsg').innerText = data.message || data.error;
+    }
+
+    async function login() {
+      const username = document.getElementById('loginUser').value;
+      const password = document.getElementById('loginPass').value;
+      const res = await fetch(`${API}/login`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ username, password })
+      });
+      const data = await res.json();
+      if (data.wallet !== undefined) {
+        currentUser = username;
+        document.getElementById('loggedInUser').innerText = currentUser;
+        document.getElementById('walletDisplay').innerText = data.wallet;
+        document.getElementById('tradeSection').style.display = 'block';
+        document.getElementById('loginMsg').innerText = '';
+      } else {
+        document.getElementById('loginMsg').innerText = data.error;
+      }
+    }
+
+    async function trade() {
+      const amount = parseFloat(document.getElementById('amount').value);
+      const res = await fetch(`${API}/trade`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ username: currentUser, amount })
+      });
+      const data = await res.json();
+      document.getElementById('tradeMsg').innerText = data.message || data.error;
+      if (data.wallet !== undefined) {
+        document.getElementById('walletDisplay').innerText = data.wallet;
+      }
+    }
+  </script>
+
+</body>
+</html>
