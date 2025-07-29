@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import LandingPage from './LandingPage';
+import QRCode from 'qrcode.react';
 
 function App() {
   const [showLanding, setShowLanding] = useState(true);
@@ -16,6 +17,8 @@ function App() {
   const [liveRates, setLiveRates] = useState([]);
   const [recentJoins, setRecentJoins] = useState([]);
   const [currentJoinIndex, setCurrentJoinIndex] = useState(0);
+
+  const BTC_ADDRESS = 'bc1qjrhku4yrvnrys7jq6532ar5a6m96k2mg8gwxx2';
 
   // Fetch live crypto prices
   useEffect(() => {
@@ -86,6 +89,17 @@ function App() {
     alert(data.message || data.error);
   };
 
+  const handleCheckDeposit = async () => {
+    const res = await fetch(`https://bittrade-backend-1bk5.onrender.com/api/check-deposit/${username}`);
+    const data = await res.json();
+    if (data.success) {
+      alert(`✅ Deposit found: ${data.credited} BTC`);
+      setWallet(prev => prev + data.credited);
+    } else {
+      alert(data.message || 'No new BTC deposit found.');
+    }
+  };
+
   const fetchTradeHistory = async () => {
     const res = await fetch(`https://bittrade-backend-1bk5.onrender.com/api/trades/${username}`);
     const data = await res.json();
@@ -142,6 +156,16 @@ function App() {
             <>
               <h2>Welcome {username}</h2>
               <p>Wallet Balance: ₿ {wallet.toFixed(4)}</p>
+
+              <div className="deposit-box">
+                <h3>💰 Deposit Real BTC</h3>
+                <p>Send BTC to the address below:</p>
+                <code>{BTC_ADDRESS}</code>
+                <QRCode value={BTC_ADDRESS} size={128} />
+                <br />
+                <button onClick={handleCheckDeposit}>Check for BTC Deposit</button>
+              </div>
+
               <input
                 placeholder="Trade amount"
                 type="number"
@@ -190,5 +214,6 @@ function App() {
 }
 
 export default App;
+
 
 
