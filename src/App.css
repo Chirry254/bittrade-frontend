@@ -28,6 +28,13 @@ h2 {
   color: #374151;
 }
 
+h3 {
+  font-size: 1.15rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  color: #1f2937;
+}
+
 p {
   font-size: 1rem;
   margin: 0.5rem 0;
@@ -61,5 +68,62 @@ button:hover {
   background-color: #2563eb;
 }
 
+/* Trade History */
+ul {
+  list-style-type: none;
+  padding: 0;
+  text-align: left;
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.75rem;
+  background-color: #f9fafb;
+  font-size: 0.95rem;
+}
+
+/* Leaderboard */
+.leaderboard {
+  width: 100%;
+  max-width: 100%;
+  margin-top: 1rem;
+  border-collapse: collapse;
+  border: 1px solid #d1d5db;
+}
+
+.leaderboard th,
+.leaderboard td {
+  padding: 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+.leaderboard th {
+  background-color: #f3f4f6;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Chat Box */
+.chat-box {
+  max-height: 200px;
+  overflow-y: auto;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+.chat-box div {
+  margin-bottom: 0.5rem;
+}
+
+.chat-box strong {
+  color: #111827;
+}
 
 

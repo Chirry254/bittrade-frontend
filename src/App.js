@@ -8,9 +8,14 @@ function App() {
   const [password, setPassword] = useState('');
   const [amount, setAmount] = useState('');
   const [trades, setTrades] = useState([]);
+  const [leaderboard, setLeaderboard] = useState([]);
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
+
+  const backend = 'https://bittrade-backend-1bk5.onrender.com';
 
   const handleRegister = async () => {
-    const res = await fetch('https://bittrade-backend-1bk5.onrender.com/api/register', {
+    const res = await fetch(`${backend}/api/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
@@ -20,7 +25,7 @@ function App() {
   };
 
   const handleLogin = async () => {
-    const res = await fetch('https://bittrade-backend-1bk5.onrender.com/api/login', {
+    const res = await fetch(`${backend}/api/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
@@ -29,14 +34,16 @@ function App() {
     if (data.wallet !== undefined) {
       setWallet(data.wallet);
       setView('trade');
-      fetchTradeHistory(); // ✅ Fetch trade history after successful login
+      fetchTradeHistory();
+      fetchLeaderboard();
+      fetchMessages();
     } else {
       alert(data.error);
     }
   };
 
   const handleTrade = async () => {
-    const res = await fetch('https://bittrade-backend-1bk5.onrender.com/api/trade', {
+    const res = await fetch(`${backend}/api/trade`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, amount: parseFloat(amount) }),
@@ -44,16 +51,43 @@ function App() {
     const data = await res.json();
     if (data.wallet !== undefined) {
       setWallet(data.wallet);
-      fetchTradeHistory(); // ✅ Update trade history after each trade
+      fetchTradeHistory();
+      fetchLeaderboard();
     }
     alert(data.message || data.error);
   };
 
   const fetchTradeHistory = async () => {
-    const res = await fetch(`https://bittrade-backend-1bk5.onrender.com/api/trades/${username}`);
+    const res = await fetch(`${backend}/api/trades/${username}`);
     const data = await res.json();
-    if (Array.isArray(data)) {
-      setTrades(data);
+    if (Array.isArray(data)) setTrades(data);
+  };
+
+  const fetchLeaderboard = async () => {
+    const res = await fetch(`${backend}/api/leaderboard`);
+    const data = await res.json();
+    if (Array.isArray(data)) setLeaderboard(data);
+  };
+
+  const fetchMessages = async () => {
+    const res = await fetch(`${backend}/api/messages`);
+    const data = await res.json();
+    if (Array.isArray(data)) setMessages(data);
+  };
+
+  const handlePostMessage = async () => {
+    if (!newMessage.trim()) return;
+    const res = await fetch(`${backend}/api/message`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user: username, content: newMessage }),
+    });
+    const data = await res.json();
+    if (data.message) {
+      setNewMessage('');
+      fetchMessages();
+    } else {
+      alert(data.error);
     }
   };
 
@@ -87,10 +121,43 @@ function App() {
             {trades.map((t, i) => (
               <li key={i}>
                 {new Date(t.timestamp).toLocaleString()} — 
-                {t.result >= 0 ? ' ✅ Profit:' : ' ❌ Loss:'} {t.result.toFixed(4)} BTC
+                {t.result >= 0 ? '✅ Profit:' : '❌ Loss:'} {t.result.toFixed(4)} BTC
               </li>
             ))}
           </ul>
+
+          <h3>🏆 Leaderboard</h3>
+          <table className="leaderboard">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>User</th>
+                <th>Wallet (₿)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {leaderboard.map((user, i) => (
+                <tr key={i}>
+                  <td>{i + 1}</td>
+                  <td>{user.username}</td>
+                  <td>{user.wallet.toFixed(4)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <h3>💬 Live Chat</h3>
+          <div className="chat-box">
+            {messages.map((m, i) => (
+              <div key={i}><strong>{m.user}:</strong> {m.content}</div>
+            ))}
+          </div>
+          <input
+            placeholder="Type a message"
+            value={newMessage}
+            onChange={e => setNewMessage(e.target.value)}
+          />
+          <button onClick={handlePostMessage}>Send</button>
         </div>
       )}
     </div>
