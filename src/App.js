@@ -8,14 +8,42 @@ function App() {
   const [password, setPassword] = useState('');
   const [amount, setAmount] = useState('');
   const [trades, setTrades] = useState([]);
-  const [leaderboard, setLeaderboard] = useState([]);
-  const [messages, setMessages] = useState([]);
+  const [chatMessages, setChatMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
+  const [leaderboard, setLeaderboard] = useState([]);
+  const [liveRates, setLiveRates] = useState([]);
+  const [recentJoins, setRecentJoins] = useState([]);
+  const [currentJoinIndex, setCurrentJoinIndex] = useState(0);
 
-  const backend = 'https://bittrade-backend-1bk5.onrender.com';
+  // Fetch live crypto prices
+  useEffect(() => {
+    fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd')
+      .then(res => res.json())
+      .then(data => {
+        setLiveRates([
+          { pair: 'BTC/USD', price: data.bitcoin.usd },
+          { pair: 'ETH/USD', price: data.ethereum.usd },
+          { pair: 'SOL/USD', price: data.solana.usd }
+        ]);
+      });
+  }, []);
+
+  // Simulated join messages
+  useEffect(() => {
+    setRecentJoins([
+      '🚀 James just joined BitTrade!',
+      '📈 Alice made 0.02 BTC profit!',
+      '💼 Brian just registered!',
+      '🏆 Diana reached top 5 on leaderboard!'
+    ]);
+    const ticker = setInterval(() => {
+      setCurrentJoinIndex(i => (i + 1) % 4);
+    }, 4000);
+    return () => clearInterval(ticker);
+  }, []);
 
   const handleRegister = async () => {
-    const res = await fetch(`${backend}/api/register`, {
+    const res = await fetch('https://bittrade-backend-1bk5.onrender.com/api/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
@@ -25,7 +53,7 @@ function App() {
   };
 
   const handleLogin = async () => {
-    const res = await fetch(`${backend}/api/login`, {
+    const res = await fetch('https://bittrade-backend-1bk5.onrender.com/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
@@ -36,14 +64,13 @@ function App() {
       setView('trade');
       fetchTradeHistory();
       fetchLeaderboard();
-      fetchMessages();
     } else {
       alert(data.error);
     }
   };
 
   const handleTrade = async () => {
-    const res = await fetch(`${backend}/api/trade`, {
+    const res = await fetch('https://bittrade-backend-1bk5.onrender.com/api/trade', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, amount: parseFloat(amount) }),
@@ -58,36 +85,21 @@ function App() {
   };
 
   const fetchTradeHistory = async () => {
-    const res = await fetch(`${backend}/api/trades/${username}`);
+    const res = await fetch(`https://bittrade-backend-1bk5.onrender.com/api/trades/${username}`);
     const data = await res.json();
     if (Array.isArray(data)) setTrades(data);
   };
 
   const fetchLeaderboard = async () => {
-    const res = await fetch(`${backend}/api/leaderboard`);
+    const res = await fetch('https://bittrade-backend-1bk5.onrender.com/api/leaderboard');
     const data = await res.json();
     if (Array.isArray(data)) setLeaderboard(data);
   };
 
-  const fetchMessages = async () => {
-    const res = await fetch(`${backend}/api/messages`);
-    const data = await res.json();
-    if (Array.isArray(data)) setMessages(data);
-  };
-
-  const handlePostMessage = async () => {
-    if (!newMessage.trim()) return;
-    const res = await fetch(`${backend}/api/message`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user: username, content: newMessage }),
-    });
-    const data = await res.json();
-    if (data.message) {
+  const handleSendMessage = () => {
+    if (newMessage.trim()) {
+      setChatMessages(prev => [...prev, { user: username, message: newMessage }]);
       setNewMessage('');
-      fetchMessages();
-    } else {
-      alert(data.error);
     }
   };
 
@@ -96,16 +108,32 @@ function App() {
       <h1>💹 BitTrade Platform</h1>
 
       {view === 'dashboard' && (
-        <div>
-          <input placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} />
-          <input placeholder="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} />
-          <button onClick={handleRegister}>Register</button>
-          <button onClick={handleLogin}>Login</button>
-        </div>
+        <>
+          <h2>Join 5,000+ users earning crypto daily</h2>
+
+          <div className="rates">
+            {liveRates.map((rate, i) => (
+              <div key={i} className="rate-item">
+                <strong>{rate.pair}</strong>: ${rate.price}
+              </div>
+            ))}
+          </div>
+
+          <div className="ticker">
+            <p>{recentJoins[currentJoinIndex]}</p>
+          </div>
+
+          <div className="auth">
+            <input placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} />
+            <input placeholder="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} />
+            <button onClick={handleRegister}>Register</button>
+            <button onClick={handleLogin}>Login</button>
+          </div>
+        </>
       )}
 
       {view === 'trade' && (
-        <div>
+        <>
           <h2>Welcome {username}</h2>
           <p>Wallet Balance: ₿ {wallet.toFixed(4)}</p>
           <input
@@ -121,48 +149,38 @@ function App() {
             {trades.map((t, i) => (
               <li key={i}>
                 {new Date(t.timestamp).toLocaleString()} — 
-                {t.result >= 0 ? '✅ Profit:' : '❌ Loss:'} {t.result.toFixed(4)} BTC
+                {t.result >= 0 ? ' ✅ Profit:' : ' ❌ Loss:'} {t.result.toFixed(4)} BTC
               </li>
             ))}
           </ul>
 
-          <h3>🏆 Leaderboard</h3>
-          <table className="leaderboard">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>User</th>
-                <th>Wallet (₿)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {leaderboard.map((user, i) => (
-                <tr key={i}>
-                  <td>{i + 1}</td>
-                  <td>{user.username}</td>
-                  <td>{user.wallet.toFixed(4)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          <h3>💬 Live Chat</h3>
-          <div className="chat-box">
-            {messages.map((m, i) => (
-              <div key={i}><strong>{m.user}:</strong> {m.content}</div>
+          <h3>🏅 Leaderboard</h3>
+          <ol>
+            {leaderboard.map((u, i) => (
+              <li key={i}>
+                {u.username} - {u.wallet.toFixed(4)} BTC
+              </li>
             ))}
+          </ol>
+
+          <h3>💬 Chat</h3>
+          <div className="chat-box">
+            {chatMessages.map((msg, i) => (
+              <div key={i}><strong>{msg.user}:</strong> {msg.message}</div>
+            ))}
+            <input
+              value={newMessage}
+              onChange={e => setNewMessage(e.target.value)}
+              placeholder="Type a message"
+            />
+            <button onClick={handleSendMessage}>Send</button>
           </div>
-          <input
-            placeholder="Type a message"
-            value={newMessage}
-            onChange={e => setNewMessage(e.target.value)}
-          />
-          <button onClick={handlePostMessage}>Send</button>
-        </div>
+        </>
       )}
     </div>
   );
 }
 
 export default App;
+
 
