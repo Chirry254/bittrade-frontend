@@ -16,8 +16,8 @@ const depositOptions = {
   paypal: {
     name: 'PayPal',
     icon: '💳',
-    address: 'payments@bittrade.com',
-    description: 'Send via PayPal Friends & Family',
+    address: 'https://www.paypal.com/paypalme/kipchirry84',
+    description: 'Click to open PayPal and send payment',
     fees: 'Free for F&F',
     time: 'Instant',
     regions: 'US, EU, UK, CA, AU'
@@ -160,8 +160,16 @@ function App() {
           <button onClick={() => setShowDepositModal(false)}>×</button>
         </div>
         <div className="modal-body">
-          <QRCode value={depositOptions[selectedDepositMethod].address} size={200} />
-          <p><strong>Address:</strong> {depositOptions[selectedDepositMethod].address}</p>
+          {selectedDepositMethod === 'paypal' ? (
+            <a href={depositOptions[selectedDepositMethod].address} target="_blank" rel="noopener noreferrer">
+              <button>Pay with PayPal</button>
+            </a>
+          ) : (
+            <>
+              <QRCode value={depositOptions[selectedDepositMethod].address} size={200} />
+              <p><strong>Address:</strong> {depositOptions[selectedDepositMethod].address}</p>
+            </>
+          )}
           <p><strong>Description:</strong> {depositOptions[selectedDepositMethod].description}</p>
           <p><strong>Fees:</strong> {depositOptions[selectedDepositMethod].fees}</p>
           <p><strong>Processing Time:</strong> {depositOptions[selectedDepositMethod].time}</p>
@@ -245,6 +253,7 @@ function App() {
 }
 
 export default App;
+
 
 
 
