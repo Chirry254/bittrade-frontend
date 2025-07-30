@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import LandingPage from './LandingPage';
-import QRCode from 'qrcode.react';
+import { QRCodeSVG as QRCode } from 'qrcode.react';
 
 function App() {
   const [showLanding, setShowLanding] = useState(true);
