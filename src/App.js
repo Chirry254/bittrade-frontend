@@ -34,7 +34,7 @@ function App() {
     ethereum: {
       name: 'Ethereum (ETH)',
       icon: 'Ξ',
-      address: '0x742d36Cc6dF8F34204FCfA2E8B2c0e5ED4b4c123',
+      address: '0x064326d2abD8f90f96270F25CeE6046BeD4e1e05',
       description: 'Send Ethereum to our ERC-20 wallet',
       fees: 'Variable gas fees',
       time: '12-35 confirmations',
@@ -43,7 +43,7 @@ function App() {
     usdt: {
       name: 'Tether (USDT)',
       icon: '₮',
-      address: 'TQn9Y2khEsLJW1ChVWFMSMeRDow5oQiobV',
+      address: 'TEVcXEQaAaA6bPHfVbvnHhSbVR6aK1Pp9X',
       description: 'USDT TRC-20 network (Tron)',
       fees: '1 USDT',
       time: '1-3 minutes',
