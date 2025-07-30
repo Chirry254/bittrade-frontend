@@ -4,7 +4,7 @@ import LandingPage from './LandingPage';
 import { QRCodeSVG as QRCode } from 'qrcode.react';
 
 function App() {
-  const [showLanding, setShowLanding] = useState(true);
+  const [showLanding, setShowLanding] = useState(false);
   const [view, setView] = useState('dashboard');
   const [wallet, setWallet] = useState(0);
   const [username, setUsername] = useState('');
