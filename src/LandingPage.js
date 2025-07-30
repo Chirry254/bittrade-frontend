@@ -1,194 +1,122 @@
-import React, { useState, useEffect } from 'react';
-import './App.css';
-import LandingPage from './LandingPage';
+import React from 'react';
 
-function App() {
-  const [showLanding, setShowLanding] = useState(true);
-  const [view, setView] = useState('dashboard');
-  const [wallet, setWallet] = useState(0);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [amount, setAmount] = useState('');
-  const [trades, setTrades] = useState([]);
-  const [chatMessages, setChatMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState('');
-  const [leaderboard, setLeaderboard] = useState([]);
-  const [liveRates, setLiveRates] = useState([]);
-  const [recentJoins, setRecentJoins] = useState([]);
-  const [currentJoinIndex, setCurrentJoinIndex] = useState(0);
-
-  // Fetch live crypto prices
-  useEffect(() => {
-    fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd')
-      .then(res => res.json())
-      .then(data => {
-        setLiveRates([
-          { pair: 'BTC/USD', price: data.bitcoin.usd },
-          { pair: 'ETH/USD', price: data.ethereum.usd },
-          { pair: 'SOL/USD', price: data.solana.usd }
-        ]);
-      });
-  }, []);
-
-  // Simulated join ticker messages
-  useEffect(() => {
-    setRecentJoins([
-      '🚀 James just joined BitTrade!',
-      '📈 Alice made 0.02 BTC profit!',
-      '💼 Brian just registered!',
-      '🏆 Diana reached top 5 on leaderboard!'
-    ]);
-    const ticker = setInterval(() => {
-      setCurrentJoinIndex(i => (i + 1) % 4);
-    }, 4000);
-    return () => clearInterval(ticker);
-  }, []);
-
-  const handleRegister = async () => {
-    const res = await fetch('https://bittrade-backend-1bk5.onrender.com/api/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
-    });
-    const data = await res.json();
-    alert(data.message || data.error);
-  };
-
-  const handleLogin = async () => {
-    const res = await fetch('https://bittrade-backend-1bk5.onrender.com/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
-    });
-    const data = await res.json();
-    if (data.wallet !== undefined) {
-      setWallet(data.wallet);
-      setView('trade');
-      fetchTradeHistory();
-      fetchLeaderboard();
-    } else {
-      alert(data.error);
-    }
-  };
-
-  const handleTrade = async () => {
-    const res = await fetch('https://bittrade-backend-1bk5.onrender.com/api/trade', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, amount: parseFloat(amount) }),
-    });
-    const data = await res.json();
-    if (data.wallet !== undefined) {
-      setWallet(data.wallet);
-      fetchTradeHistory();
-      fetchLeaderboard();
-    }
-    alert(data.message || data.error);
-  };
-
-  const fetchTradeHistory = async () => {
-    const res = await fetch(`https://bittrade-backend-1bk5.onrender.com/api/trades/${username}`);
-    const data = await res.json();
-    if (Array.isArray(data)) setTrades(data);
-  };
-
-  const fetchLeaderboard = async () => {
-    const res = await fetch('https://bittrade-backend-1bk5.onrender.com/api/leaderboard');
-    const data = await res.json();
-    if (Array.isArray(data)) setLeaderboard(data);
-  };
-
-  const handleSendMessage = () => {
-    if (newMessage.trim()) {
-      setChatMessages(prev => [...prev, { user: username, message: newMessage }]);
-      setNewMessage('');
-    }
-  };
-
+function LandingPage({ onEnter }) {
   return (
-    <div className="App">
-      {showLanding ? (
-        <LandingPage onEnter={() => setShowLanding(false)} />
-      ) : (
-        <>
-          <h1>💹 BitTrade Platform</h1>
-
-          {view === 'dashboard' && (
-            <>
-              <h2>Join 5,000+ users earning crypto daily</h2>
-
-              <div className="rates">
-                {liveRates.map((rate, i) => (
-                  <div key={i} className="rate-item">
-                    <strong>{rate.pair}</strong>: ${rate.price}
-                  </div>
-                ))}
-              </div>
-
-              <div className="ticker">
-                <p>{recentJoins[currentJoinIndex]}</p>
-              </div>
-
-              <div className="auth">
-                <input placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} />
-                <input placeholder="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} />
-                <button onClick={handleRegister}>Register</button>
-                <button onClick={handleLogin}>Login</button>
-              </div>
-            </>
-          )}
-
-          {view === 'trade' && (
-            <>
-              <h2>Welcome {username}</h2>
-              <p>Wallet Balance: ₿ {wallet.toFixed(4)}</p>
-              <input
-                placeholder="Trade amount"
-                type="number"
-                value={amount}
-                onChange={e => setAmount(e.target.value)}
-              />
-              <button onClick={handleTrade}>Execute Trade</button>
-
-              <h3>🧾 Recent Trade History</h3>
-              <ul>
-                {trades.map((t, i) => (
-                  <li key={i}>
-                    {new Date(t.timestamp).toLocaleString()} — 
-                    {t.result >= 0 ? ' ✅ Profit:' : ' ❌ Loss:'} {t.result.toFixed(4)} BTC
-                  </li>
-                ))}
-              </ul>
-
-              <h3>🏅 Leaderboard</h3>
-              <ol>
-                {leaderboard.map((u, i) => (
-                  <li key={i}>
-                    {u.username} - {u.wallet.toFixed(4)} BTC
-                  </li>
-                ))}
-              </ol>
-
-              <h3>💬 Chat</h3>
-              <div className="chat-box">
-                {chatMessages.map((msg, i) => (
-                  <div key={i}><strong>{msg.user}:</strong> {msg.message}</div>
-                ))}
-                <input
-                  value={newMessage}
-                  onChange={e => setNewMessage(e.target.value)}
-                  placeholder="Type a message"
-                />
-                <button onClick={handleSendMessage}>Send</button>
-              </div>
-            </>
-          )}
-        </>
-      )}
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)',
+      color: 'white',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      textAlign: 'center',
+      padding: '20px'
+    }}>
+      <div style={{ maxWidth: '600px' }}>
+        <h1 style={{ 
+          fontSize: '3.5rem', 
+          marginBottom: '20px',
+          textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
+        }}>
+          🚀 BitTrade
+        </h1>
+        
+        <h2 style={{ 
+          fontSize: '1.8rem', 
+          marginBottom: '30px',
+          fontWeight: '300'
+        }}>
+          Your Gateway to Crypto Trading
+        </h2>
+        
+        <p style={{ 
+          fontSize: '1.2rem', 
+          marginBottom: '40px',
+          lineHeight: '1.6',
+          opacity: '0.9'
+        }}>
+          Join thousands of users earning Bitcoin daily through smart trading strategies. 
+          Start with as little as 0.001 BTC and watch your portfolio grow.
+        </p>
+        
+        <div style={{ marginBottom: '40px' }}>
+          <div style={{ 
+            display: 'inline-block', 
+            margin: '10px 20px',
+            padding: '15px',
+            background: 'rgba(255,255,255,0.1)',
+            borderRadius: '10px'
+          }}>
+            <h3 style={{ margin: '0 0 5px 0' }}>5,000+</h3>
+            <p style={{ margin: '0', opacity: '0.8' }}>Active Traders</p>
+          </div>
+          
+          <div style={{ 
+            display: 'inline-block', 
+            margin: '10px 20px',
+            padding: '15px',
+            background: 'rgba(255,255,255,0.1)',
+            borderRadius: '10px'
+          }}>
+            <h3 style={{ margin: '0 0 5px 0' }}>₿12.5</h3>
+            <p style={{ margin: '0', opacity: '0.8' }}>Daily Volume</p>
+          </div>
+          
+          <div style={{ 
+            display: 'inline-block', 
+            margin: '10px 20px',
+            padding: '15px',
+            background: 'rgba(255,255,255,0.1)',
+            borderRadius: '10px'
+          }}>
+            <h3 style={{ margin: '0 0 5px 0' }}>24/7</h3>
+            <p style={{ margin: '0', opacity: '0.8' }}>Live Trading</p>
+          </div>
+        </div>
+        
+        <button 
+          onClick={onEnter}
+          style={{
+            padding: '18px 40px',
+            fontSize: '1.3rem',
+            fontWeight: 'bold',
+            backgroundColor: '#ff6b35',
+            color: 'white',
+            border: 'none',
+            borderRadius: '50px',
+            cursor: 'pointer',
+            boxShadow: '0 8px 25px rgba(255, 107, 53, 0.3)',
+            transition: 'all 0.3s ease',
+            textTransform: 'uppercase',
+            letterSpacing: '1px'
+          }}
+          onMouseOver={(e) => {
+            e.target.style.backgroundColor = '#e55a2b';
+            e.target.style.transform = 'translateY(-2px)';
+            e.target.style.boxShadow = '0 12px 35px rgba(255, 107, 53, 0.4)';
+          }}
+          onMouseOut={(e) => {
+            e.target.style.backgroundColor = '#ff6b35';
+            e.target.style.transform = 'translateY(0)';
+            e.target.style.boxShadow = '0 8px 25px rgba(255, 107, 53, 0.3)';
+          }}
+        >
+          Enter Platform
+        </button>
+        
+        <p style={{ 
+          marginTop: '30px', 
+          fontSize: '0.9rem', 
+          opacity: '0.7'
+        }}>
+          ⚡ Lightning fast trades • 🔒 Secure wallet • 📈 Real-time analytics
+        </p>
+      </div>
     </div>
   );
 }
 
-export default App;
+export default LandingPage;
 
 
